@@ -472,6 +472,82 @@ nav {
 .greeting-line { font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); margin-bottom:4px; }
 .greeting-name { font-family:var(--font-head); font-size:2rem; font-weight:800; letter-spacing:-0.04em; line-height:1.1; margin-bottom:4px; }
 .greeting-sub { font-size:0.82rem; color:var(--muted); }
+
+/* ============================
+   SONHOS FORM
+   ============================ */
+.sonho-add-form { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.sonho-input {
+  flex:1; min-width:150px; background:var(--card2); border:1px solid var(--border2);
+  color:var(--text); border-radius:10px; padding:9px 12px;
+  font-size:0.85rem; font-family:var(--font-body); outline:none; transition:border 0.2s;
+}
+.sonho-input:focus { border-color:var(--purple); }
+.sonho-add-btn {
+  background:var(--purple-dim); border:1px solid rgba(124,58,237,0.35);
+  color:#a78bfa; border-radius:10px; padding:9px 14px;
+  font-size:0.82rem; font-weight:700; cursor:pointer; font-family:var(--font-body);
+  white-space:nowrap; transition:background 0.2s;
+}
+.sonho-add-btn:hover { background:rgba(124,58,237,0.28); }
+.sonho-card-i {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:14px; display:flex; align-items:flex-start; gap:10px; margin-bottom:8px;
+}
+.sonho-del { background:none; border:none; color:var(--muted2); cursor:pointer; font-size:1rem; padding:0 2px; flex-shrink:0; transition:color 0.2s; }
+.sonho-del:hover { color:var(--red); }
+.sonho-motivo { font-size:0.72rem; color:var(--muted); margin-top:3px; font-style:italic; line-height:1.4; }
+.sonho-why-wrap { margin-top:8px; display:none; }
+.sonho-why-input {
+  width:100%; background:var(--card2); border:1px solid var(--border2); color:var(--text);
+  border-radius:8px; padding:7px 10px; font-size:0.8rem; font-family:var(--font-body);
+  outline:none; resize:none; transition:border 0.2s;
+}
+.sonho-why-input:focus { border-color:var(--purple); }
+
+/* ============================
+   DESKTOP LAYOUT
+   ============================ */
+@media (min-width:900px) {
+  body { padding-bottom:0; }
+  header { padding:0 40px; left:220px; }
+  main { max-width:1100px; padding:88px 36px 40px; margin-left:220px; }
+  nav { display:none !important; }
+  .wa-btn { bottom:24px; right:24px; }
+  #desktop-nav { display:flex !important; }
+  .desktop-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  .desktop-col-full { grid-column:1/-1; }
+  .kpi-grid { grid-template-columns:repeat(4,1fr); }
+  .kpi-card.wide { grid-column:span 2; }
+}
+@media (max-width:899px) {
+  #desktop-nav { display:none !important; }
+  .desktop-grid { display:block; }
+}
+
+/* Desktop sidebar */
+#desktop-nav {
+  display:none;
+  position:fixed; left:0; top:0; bottom:0; width:220px;
+  background:rgba(8,8,16,0.92); backdrop-filter:blur(24px);
+  border-right:1px solid var(--border);
+  flex-direction:column; padding:80px 14px 24px; gap:4px; z-index:99;
+}
+.desk-nav-logo {
+  font-family:var(--font-head); font-size:1.1rem; font-weight:800;
+  letter-spacing:-0.03em; margin-bottom:24px; padding:0 10px;
+  background:linear-gradient(135deg,#a78bfa,#06b6d4);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.desk-nav-btn {
+  display:flex; align-items:center; gap:10px; background:none; border:none;
+  cursor:pointer; color:var(--muted); padding:10px 12px; border-radius:10px;
+  font-family:var(--font-body); font-size:0.85rem; font-weight:500;
+  transition:all 0.2s; width:100%; text-align:left;
+}
+.desk-nav-btn svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+.desk-nav-btn:hover { background:var(--card); color:var(--text); }
+.desk-nav-btn.active { background:var(--purple-dim); color:#a78bfa; border:1px solid rgba(124,58,237,0.25); }
 </style>
 </head>
 <body>
@@ -479,6 +555,31 @@ nav {
 <!-- Ambient BG -->
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
+
+<!-- DESKTOP SIDEBAR NAV -->
+<nav id="desktop-nav">
+  <div class="desk-nav-logo">Lumnis</div>
+  <button class="desk-nav-btn active" id="desk-nav-home" onclick="switchTab('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </button>
+  <button class="desk-nav-btn" id="desk-nav-transacoes" onclick="switchTab('transacoes')">
+    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Extrato
+  </button>
+  <button class="desk-nav-btn" id="desk-nav-faturas" onclick="switchTab('faturas')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Faturas
+  </button>
+  <button class="desk-nav-btn" id="desk-nav-metas" onclick="switchTab('metas')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    Metas
+  </button>
+  <button class="desk-nav-btn" id="desk-nav-perfil" onclick="switchTab('perfil')">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Perfil
+  </button>
+</nav>
 
 <!-- ===========================
      LOCK SCREEN
@@ -634,25 +735,33 @@ nav {
       <button class="chip" data-tipo="receita" onclick="filterTx('receita')" id="chip-receita" style="display:none">💰 Receitas</button>
     </div>
 
-    <!-- Donut Chart -->
-    <div class="card section fade-in">
-      <div class="label" style="margin-bottom:12px">Gastos por Categoria</div>
-      <div class="chart-wrap" style="max-height:200px">
-        <canvas id="chart-donut"></canvas>
-      </div>
-    </div>
+    <div class="desktop-grid">
+      <!-- Left col -->
+      <div>
+        <!-- Donut Chart -->
+        <div class="card section fade-in">
+          <div class="label" style="margin-bottom:12px">Gastos por Categoria</div>
+          <div class="chart-wrap" style="max-height:200px">
+            <canvas id="chart-donut"></canvas>
+          </div>
+        </div>
 
-    <!-- Line Chart -->
-    <div class="card section fade-in">
-      <div class="label" style="margin-bottom:12px">Últimos 30 dias</div>
-      <div class="chart-wrap" style="max-height:160px">
-        <canvas id="chart-line"></canvas>
+        <!-- Line Chart -->
+        <div class="card section fade-in">
+          <div class="label" style="margin-bottom:12px">Últimos 30 dias</div>
+          <div class="chart-wrap" style="max-height:160px">
+            <canvas id="chart-line"></canvas>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="section fade-in">
-      <div class="label" style="margin-bottom:10px">Lista de Transações</div>
-      <div class="tx-list" id="tx-list"><div class="skeleton sk-card"></div></div>
+      <!-- Right col -->
+      <div>
+        <div class="section fade-in">
+          <div class="label" style="margin-bottom:10px">Lista de Transações</div>
+          <div class="tx-list" id="tx-list"><div class="skeleton sk-card"></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -748,7 +857,23 @@ nav {
     </div>
 
     <div class="card section fade-in" id="sonhos-perfil-card">
-      <div class="label" style="margin-bottom:12px">Seus Sonhos 🌟</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="label">Seus Sonhos & Objetivos 🌟</div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5">
+        Defina o <em>porquê</em> de controlar seus gastos. Quando a tentação aparecer, lembre-se do que você está construindo. 💜
+      </p>
+      <div class="sonho-add-form">
+        <input class="sonho-input" id="sonho-nome-input" type="text" placeholder="Ex: Viagem para Portugal 🌍" maxlength="80"/>
+        <button class="sonho-add-btn" onclick="toggleSonhoForm()">+ Adicionar</button>
+      </div>
+      <div id="sonho-why-wrap" style="display:none;margin-bottom:12px">
+        <textarea class="sonho-why-input" id="sonho-motivo-input" rows="2" placeholder="Por que esse sonho é importante pra você? (opcional)"></textarea>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button class="sonho-add-btn" onclick="addSonho()" style="flex:1">Salvar Sonho ✨</button>
+          <button onclick="toggleSonhoForm()" style="background:var(--card2);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:0.82rem">Cancelar</button>
+        </div>
+      </div>
       <div id="sonhos-perfil-list"></div>
     </div>
 
@@ -848,8 +973,18 @@ function monthStart() { const d=new Date(); return `${d.getFullYear()}-${String(
 
 const CAT_EMOJI = {
   alimentacao:'🍽️', transporte:'🚗', saude:'💊', lazer:'🎮', educacao:'📚',
-  moradia:'🏠', vestuario:'👕', streaming:'📺', assinaturas:'📦', salario:'💼',
-  freela:'💰', outros:'📦', investimento:'📈', cartao:'💳'
+  moradia:'🏠', vestuario:'👕', roupa:'👕', streaming:'📺', assinaturas:'📦',
+  salario:'💼', freela:'💻', freelance:'💻', outros:'📌', investimento:'📈',
+  cartao:'💳', compras:'🛍️', shopping:'🛍️', ferramenta:'🔧', ferramentas:'🔧',
+  software:'💻', servico:'🔧', servicos:'🔧', chat:'💬', comunicacao:'💬',
+  pets:'🐾', animal:'🐾', viagem:'✈️', academia:'💪', fitness:'💪',
+  farmacia:'💊', medico:'🩺', telefone:'📱', internet:'🌐', gas:'🔥',
+  agua:'💧', energia:'⚡', luz:'⚡', presente:'🎁', festa:'🎉', bar:'🍺',
+  restaurante:'🍽️', ifood:'🛵', delivery:'🛵', mercado:'🛒', supermercado:'🛒',
+  uber:'🚗', combustivel:'⛽', gasolina:'⛽', seguro:'🛡️', imposto:'📋',
+  aluguel:'🏠', condominio:'🏢', curso:'📖', livro:'📚', musica:'🎵',
+  cinema:'🎬', jogo:'🎮', games:'🎮', beleza:'💄', cabelo:'✂️', salao:'✂️',
+  conta:'📋', boleto:'📋', cartorio:'📋', advogado:'⚖️', consultoria:'💼'
 };
 function emojiFor(cat) {
   const k = (cat||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -1058,16 +1193,7 @@ function renderHome(user, streak, categorias) {
   }
 
   // Sonhos
-  const sonhos = Array.isArray(user.sonhos) ? user.sonhos : [];
-  const sonhosEl = document.getElementById('sonhos-list');
-  if (!sonhos.length) {
-    sonhosEl.innerHTML='<div class="card" style="font-size:0.82rem;color:var(--muted)">Adicione seus sonhos no WhatsApp para ver aqui! ✨</div>';
-  } else {
-    sonhosEl.innerHTML = sonhos.map(s=>{
-      const nome = typeof s==='string'?s:(s.nome||s.descricao||JSON.stringify(s));
-      return `<div class="sonho-card"><span class="sonho-emoji">⭐</span><div class="sonho-info"><div class="sonho-nome">${nome}</div></div></div>`;
-    }).join('');
-  }
+  renderSonhosHome(Array.isArray(user.sonhos) ? user.sonhos : []);
 }
 
 // =====================================================
@@ -1275,13 +1401,103 @@ function renderPerfil(user) {
   document.getElementById('meta-input').value     = user.meta_mensal||user.meta_gastos_mensal||2000;
 
   // Sonhos no perfil
-  const sonhos = Array.isArray(user.sonhos)?user.sonhos:[];
-  const el=document.getElementById('sonhos-perfil-list');
-  if(!sonhos.length){ el.innerHTML='<p style="font-size:0.82rem;color:var(--muted)">Nenhum sonho cadastrado.</p>'; return; }
-  el.innerHTML=sonhos.map(s=>{
-    const nome=typeof s==='string'?s:(s.nome||s.descricao||JSON.stringify(s));
-    return `<div class="sonho-card"><span class="sonho-emoji">⭐</span><div class="sonho-info"><div class="sonho-nome">${nome}</div></div></div>`;
+  renderSonhosList(Array.isArray(user.sonhos)?user.sonhos:[]);
+}
+
+function renderSonhosList(sonhos) {
+  const el = document.getElementById('sonhos-perfil-list');
+  if (!sonhos.length) {
+    el.innerHTML = '<p style="font-size:0.82rem;color:var(--muted);text-align:center;padding:8px 0">Adicione seu primeiro sonho acima! ✨</p>';
+    return;
+  }
+  el.innerHTML = sonhos.map((s, i) => {
+    const nome = typeof s==='string' ? s : (s.nome||s.descricao||'');
+    const motivo = typeof s==='object' ? (s.motivo||s.porque||'') : '';
+    const emoji = typeof s==='object' ? (s.emoji||'⭐') : '⭐';
+    return `
+      <div class="sonho-card-i">
+        <span style="font-size:1.3rem;flex-shrink:0">${emoji}</span>
+        <div style="flex:1;min-width:0">
+          <div class="sonho-nome">${nome}</div>
+          ${motivo ? `<div class="sonho-motivo">"${motivo}"</div>` : ''}
+        </div>
+        <button class="sonho-del" onclick="deleteSonho(${i})" title="Remover">✕</button>
+      </div>`;
   }).join('');
+}
+
+function toggleSonhoForm() {
+  const wrap = document.getElementById('sonho-why-wrap');
+  const nome = document.getElementById('sonho-nome-input').value.trim();
+  if (!nome) { document.getElementById('sonho-nome-input').focus(); return; }
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+}
+
+async function addSonho() {
+  const nome = document.getElementById('sonho-nome-input').value.trim();
+  const motivo = document.getElementById('sonho-motivo-input').value.trim();
+  if (!nome) return;
+  const emoji = getEmojiForSonho(nome);
+  const sonhos = Array.isArray(userData.sonhos) ? [...userData.sonhos] : [];
+  sonhos.push({ nome, motivo, emoji });
+  const btn = document.querySelector('#sonhos-perfil-card .sonho-add-btn');
+  btn.textContent = 'Salvando...';
+  const { error } = await sb.from('usuarios').update({ sonhos }).eq('id', USER_ID);
+  if (!error) {
+    userData.sonhos = sonhos;
+    document.getElementById('sonho-nome-input').value = '';
+    document.getElementById('sonho-motivo-input').value = '';
+    document.getElementById('sonho-why-wrap').style.display = 'none';
+    renderSonhosList(sonhos);
+    // Update home tab too
+    renderSonhosHome(sonhos);
+  }
+  btn.textContent = '+ Adicionar';
+}
+
+async function deleteSonho(idx) {
+  const sonhos = Array.isArray(userData.sonhos) ? [...userData.sonhos] : [];
+  sonhos.splice(idx, 1);
+  await sb.from('usuarios').update({ sonhos }).eq('id', USER_ID);
+  userData.sonhos = sonhos;
+  renderSonhosList(sonhos);
+  renderSonhosHome(sonhos);
+}
+
+function renderSonhosHome(sonhos) {
+  const el = document.getElementById('sonhos-list');
+  if (!sonhos || !sonhos.length) {
+    el.innerHTML = '<div class="card" style="font-size:0.82rem;color:var(--muted)">Adicione seus sonhos na aba Perfil para ver aqui! ✨</div>';
+    return;
+  }
+  el.innerHTML = sonhos.map(s => {
+    const nome = typeof s==='string' ? s : (s.nome||s.descricao||'');
+    const motivo = typeof s==='object' ? (s.motivo||s.porque||'') : '';
+    const emoji = typeof s==='object' ? (s.emoji||'⭐') : '⭐';
+    return `
+      <div class="sonho-card-i">
+        <span style="font-size:1.3rem;flex-shrink:0">${emoji}</span>
+        <div style="flex:1;min-width:0">
+          <div class="sonho-nome">${nome}</div>
+          ${motivo ? `<div class="sonho-motivo">"${motivo}"</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function getEmojiForSonho(nome) {
+  const n = nome.toLowerCase();
+  if (n.includes('viagem') || n.includes('viajar') || n.includes('trip')) return '✈️';
+  if (n.includes('casa') || n.includes('apto') || n.includes('imovel')) return '🏡';
+  if (n.includes('carro') || n.includes('moto')) return '🚗';
+  if (n.includes('empresa') || n.includes('negocio') || n.includes('empreend')) return '🚀';
+  if (n.includes('faculdade') || n.includes('curso') || n.includes('estud')) return '🎓';
+  if (n.includes('reserva') || n.includes('poupan') || n.includes('invest')) return '💰';
+  if (n.includes('saude') || n.includes('academia') || n.includes('gym')) return '💪';
+  if (n.includes('familia') || n.includes('filho') || n.includes('casament')) return '👨‍👩‍👧';
+  if (n.includes('computador') || n.includes('pc') || n.includes('notebook')) return '💻';
+  if (n.includes('celular') || n.includes('iphone') || n.includes('telefone')) return '📱';
+  return '⭐';
 }
 
 // =====================================================
@@ -1303,8 +1519,12 @@ async function saveMeta() {
 function switchTab(tab) {
   document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.desk-nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('nav-'+tab).classList.add('active');
+  const mobileNav = document.getElementById('nav-'+tab);
+  if(mobileNav) mobileNav.classList.add('active');
+  const deskNav = document.getElementById('desk-nav-'+tab);
+  if(deskNav) deskNav.classList.add('active');
   // Re-animate
   gsap.fromTo(`#tab-${tab}`, {opacity:0,y:10},{opacity:1,y:0,duration:0.25,ease:'power2.out'});
 }
