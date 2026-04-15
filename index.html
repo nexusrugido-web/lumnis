@@ -484,10 +484,24 @@ nav {
      LOCK SCREEN
      =========================== -->
 <div id="screen-lock" class="fullscreen" style="display:none">
-  <div class="fullscreen-icon">🔒</div>
-  <h2>Acesso via WhatsApp</h2>
-  <p>Abra o Lumnis pelo link enviado no seu WhatsApp para acessar sua dashboard.</p>
-  <a href="https://wa.me/5575992373613" class="btn-primary" target="_blank">💬 Falar com Suporte</a>
+  <div style="width:100%;max-width:380px;padding:0 1.5rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-size:2.5rem;margin-bottom:0.75rem">💜</div>
+      <h2 style="font-family:var(--font-head);font-size:1.6rem;margin:0 0 0.4rem">Lumnis</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0">Seu dinheiro, sob controle</p>
+    </div>
+    <div id="login-error" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:0.75rem 1rem;color:#ef4444;font-size:0.85rem;margin-bottom:1rem;text-align:center"></div>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;font-weight:500">E-mail</label>
+      <input id="login-email" type="email" placeholder="seu@email.com" style="width:100%;padding:0.75rem 1rem;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border 0.2s" onfocus="this.style.borderColor='var(--purple)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div style="margin-bottom:1.5rem">
+      <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;font-weight:500">Senha</label>
+      <input id="login-password" type="password" placeholder="••••••••" style="width:100%;padding:0.75rem 1rem;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border 0.2s" onfocus="this.style.borderColor='var(--purple)'" onblur="this.style.borderColor='var(--border)'" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button id="login-btn" onclick="doLogin()" style="width:100%;padding:0.875rem;background:var(--purple);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity 0.2s">Entrar</button>
+    <p style="text-align:center;margin-top:1.5rem;font-size:0.82rem;color:var(--text-muted)">Problemas? <a href="https://wa.me/5575992373613" target="_blank" style="color:var(--purple);text-decoration:none">Falar com suporte</a></p>
+  </div>
 </div>
 
 <!-- ===========================
@@ -869,36 +883,76 @@ function showScreen(id) {
 }
 
 // =====================================================
+//  LOGIN COM EMAIL E SENHA
+// =====================================================
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const btn   = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'Preencha e-mail e senha.'; errEl.style.display='block'; return; }
+  btn.textContent = 'Entrando...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    errEl.textContent = 'E-mail ou senha incorretos.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Entrar'; btn.disabled = false;
+    return;
+  }
+  // Find user in usuarios by auth id or email
+  let user = null;
+  const r1 = await sb.from('usuarios').select('*').eq('id', data.user.id).single();
+  if (r1.data) { user = r1.data; }
+  else {
+    const r2 = await sb.from('usuarios').select('*').eq('email', data.user.email).single();
+    if (r2.data) user = r2.data;
+  }
+  if (!user) { errEl.textContent = 'Usuário não encontrado. Contate o suporte.'; errEl.style.display='block'; btn.textContent='Entrar'; btn.disabled=false; return; }
+  USER_ID = user.id; userData = user;
+  await loadDashboard(user);
+}
+
+// =====================================================
 //  INIT
 // =====================================================
 async function init() {
   USER_ID = getToken();
-  if (!USER_ID) { showScreen('screen-lock'); return; }
 
-  // Fetch user
+  if (!USER_ID) {
+    // Check existing Supabase session
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      const r = await sb.from('usuarios').select('*').eq('id', session.user.id).single();
+      if (r.data) { USER_ID = r.data.id; await loadDashboard(r.data); return; }
+    }
+    showScreen('screen-lock'); return;
+  }
+
   const { data: user, error } = await sb.from('usuarios').select('*').eq('id', USER_ID).single();
   if (error || !user) { showScreen('screen-lock'); return; }
+  await loadDashboard(user);
+}
 
+async function loadDashboard(user) {
   // Check access
   const acessoFim = user.acesso_fim || user.trial_fim;
   if (acessoFim && new Date(acessoFim) < new Date(today())) {
-    // check grace period
     if (!user.grace_period_fim || new Date(user.grace_period_fim) < new Date(today())) {
       showScreen('screen-expired'); return;
     }
   }
 
   userData = user;
+  USER_ID = user.id;
   showScreen(null);
 
-  // Show app
   ['app-header','app-main','app-nav','wa-btn'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.style.display='';
   });
   document.getElementById('app-nav').style.display='flex';
   document.getElementById('app-header').style.display='flex';
 
-  // Load all data in parallel
   const [txRes, faturasRes, streakRes, desafiosRes, categoriasRes] = await Promise.all([
     sb.from('transacoes').select('*').eq('user_id', USER_ID).order('data', {ascending:false}).limit(200),
     sb.from('faturas_futuras').select('*').eq('user_id', USER_ID).gte('data_venc', today()).order('data_venc'),
